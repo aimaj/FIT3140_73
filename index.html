@@ -1,0 +1,27 @@
+<html>
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        $(function(){
+            var iosocket = io.connect();
+            iosocket.on('connect', function () {
+            iosocket.on('message', function(message) {
+            });
+            iosocket.on('disconnect', function() {
+             });
+       });
+
+	   $('#ledSwitchCheckBox').click(function() {
+			//if(this.checked) {
+				iosocket.send(this.checked);
+			//}
+		});
+	   
+   });
+</script>
+</head>
+<body>
+<div>Switch LED On/Off: <input type="checkbox" id="ledSwitchCheckBox"></div>
+</body>
+</html>
