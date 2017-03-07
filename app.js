@@ -1,10 +1,41 @@
+var led;
+var motion;
+
+function IotDevice() {
+	var five = require("johnny-five");
+	var board = new five.Board();
+	board.on("ready", function() {
+		led = new five.Led(13);
+		motion = new five.Motion(2)
+
+		motion.on("calibrated", function() {
+	    		console.log("calibrated");
+	  	});
+	
+	  	motion.on("motionstart", function() {
+	    		console.log("motionstart");
+	  	});
+	
+	 	motion.on("motionend", function() {
+	    		console.log("motionend");
+	  	});
+		this.repl.inject({
+	    		led: led
+ 		});
+	});
+}
+
+IotDevice.prototype.toggleLED = function() {
+	led.toggle();
+};
+
+
 var ledFlag = 0;
 var http = require('http');
 
 var motionNumber = 0;
 
-var five = require("johnny-five");
-var myBoard, myLed;
+var arduino = new IotDevice();
 
 //server code
 var fs =require('fs')
@@ -23,47 +54,7 @@ socketio.listen(server).on('connection', function (socket) {
            console.log('Message Received: ', msg);
            socket.broadcast.emit('message', msg);
 		   //when message is received from checkbox, turn on or off the LED.
-		   myLed.toggle();
-		   
+		   arduino.toggleLED();
  });
-});
-
-//end server code
-
-//arduino code, to be moved into separate class
-
-myBoard = new five.Board();
-
-myBoard.on("ready", function() {
-
-  //var motion = new five.Motion(2);
-  myLed = new five.Led(13);
-  
-/**
-  motion.on("calibrated", function() {
-    console.log("calibrated");
-  });
-
-  motion.on("motionstart", function() {
-    console.log("motionstart");
-	
-  myLed.on();
-  });
-
-  motion.on("motionend", function() {
-    console.log("motionend");
-	motionNumber++
-  myLed.off();
-  });
-**/
-
-  // make myLED available as "led" in REPL
-
-  // try "on", "off", "toggle", "strobe", "stop" (stops strobing)
-
-  this.repl.inject({
-    led: myLed
-  });
-  console.log("You can interact with the RGB LED via the variable 'led' e.g. led.on();\n Hit control-D to exit.\n >> ");
 });
 
