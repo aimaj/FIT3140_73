@@ -15,6 +15,12 @@
   See the License for the specific language governing permissions and
   limitations under the License
 -->
+<!--
+To comply Apache Licence-2.0, the modifications to this file are as follows:
+
+This template has been modified from the original state to a basic webpage with a few input components on it, reusing all of the material design compatibility settings, colours and appearance configurations.
+Scripts have been added to allow communication with Socket.IO running on a node.JS server.
+-->
 <html lang="en">
 
 <head>
@@ -48,7 +54,8 @@
    <script>
         $(function(){
             var iosocket = io.connect();
-            iosocket.on('connect', function () {
+            iosocket.on('connect', function () {	
+			// set the values of the text components based on server messages
             iosocket.on('numMotions', function(val) {
 				$('#motionNum').text(val);
             });
@@ -61,7 +68,7 @@
             iosocket.on('disconnect', function() {
              });
        });
-
+	   // send the server messages to indicate when a checkbox component has been selected
 	   $('#ledSwitch').click(function() {
 				iosocket.send("toggleLED");
 		});
@@ -106,14 +113,14 @@
                   <td class="mdl-data-table__cell--non-numeric">Switch LED On/Off</td>
                   <td class="mdl-data-table__cell--non-numeric">
                     <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="ledSwitch">
-            <input type="checkbox" id="ledSwitch" class="mdl-switch__input" onchange="ledOnChange()">    </label>
+						<input type="checkbox" id="ledSwitch" class="mdl-switch__input" onchange="ledOnChange()">    </label>
                   </td>
                 </tr>
                 <tr>
                   <td class="mdl-data-table__cell--non-numeric">Switch Motion Sensor On/Off</td>
                   <td class="mdl-data-table__cell--non-numeric">
                     <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="motionSwitch">
-            <input type="checkbox" id="motionSwitch" class="mdl-switch__input" checked onchange="motionOnChange()">  </label>
+						<input type="checkbox" id="motionSwitch" class="mdl-switch__input" checked onchange="motionOnChange()">  </label>
                   </td>
                 </tr>
                 <tr>

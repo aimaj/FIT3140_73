@@ -2,9 +2,15 @@ function IotDevice(socket) {
 	// A class that sets up the board with johnny five, and provides methods to toggle the LED and the motion detector components
 	var five = require("johnny-five");
 	var board = new five.Board();
-	var startTime, endTime, numMotions, longMotions, shortMotions = 0;
+	// Initialise variables
+	var numMotions = 0;
+	var longMotions = 0;
+	var shortMotions = 0;
+	var startTime = 0;
+	var endTime = 0;
 	var led, motion;
 	var motionEnabled = true;
+	// A function to toggle the motion detector
 	this.toggleMotion = function() {
 		 if (motionEnabled == true) {
 			 motionEnabled = false;
@@ -45,7 +51,7 @@ function IotDevice(socket) {
 			}
 	  	});
 	});
-	
+	// a function to toggle the LED
 	this.toggleLED = function() {
 		led.toggle();
 	}	
@@ -75,5 +81,4 @@ var socket = socketio.listen(server).on('connection', function (socket) {
  });
 });
 
-// can cause crashing if accessed before fully loaded, arduino takes socket as arg but socket uses arduino methods...
 var arduino = new IotDevice(socket);
