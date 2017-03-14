@@ -14,7 +14,7 @@ Requirements:
   - Node installation
   - An Arduino UNO with johnny-five configured, an LED connected to pin 13, and a motion sensor connected to pin 2
 
-Functions and Strucutre:
+Functions and Structure:
   - An object called IotDevice
     - Within the IotDevice, we have some variables representing motions detected (numMotions, longMotions, shortMotions)
     - We also have two methods (toggleMotion, toggleLED) which toggle the motion sensor and LED respectively
