@@ -9,6 +9,7 @@ function IotDevice(socket) {
 	var startTime = 0;
 	var endTime = 0;
 	var led, motion;
+	//flag to represent when the motion detector is on or off
 	var motionEnabled = true;
 	// A function to toggle the motion detector
 	this.toggleMotion = function() {
@@ -19,7 +20,10 @@ function IotDevice(socket) {
 		 }
 	};
 	board.on("ready", function() {
+		//set up a johnny-five motion device
+		//the led at pin 13
 		led = new five.Led(13);
+		//the motion detector at pin 2
 		motion = new five.Motion(2)
 		
 		motion.on("calibrated", function() {
@@ -27,17 +31,22 @@ function IotDevice(socket) {
 	  	});
 	
 	  	motion.on("motionstart", function() {
+			//if the motion detector is enabled
 			if (motionEnabled == true) {
+				//increment the number of motions counted and record the start time
 				console.log("Start of motion detected");
 				socket.emit('numMotions', ++numMotions);
 				startTime = Date.now();
 			} else {
+				//if the motion detector is off, make start time 0
 				startTime = 0;
 			}
 	  	});
 	
 	 	motion.on("motionend", function() {
+			//if the motion detector is enabled, and the start time is not zero (meaning this current motion did not start when the detector was off)
 	    	if (motionEnabled == true && startTime != 0) {
+				//record the end time, and calculate the motion length
 				endTime = Date.now();
 				if ((endTime - startTime < 6000)) {
 					//a short motion here is defined as less than 6 seconds
@@ -61,6 +70,7 @@ var fs =require('fs')
          , http=require('http')
          , socketio=require('socket.io');
 
+//set up the server on port 8080
 var server=http.createServer(function(req, res) {
             res.writeHead(200, { 'Content-type': 'text/html'});
             res.end(fs.readFileSync(__dirname+'/index.html'));
@@ -70,10 +80,12 @@ var server=http.createServer(function(req, res) {
 var socket = socketio.listen(server).on('connection', function (socket) {
 		//create a socket to allow client/server communications
 		socket.on('message', function (msg) {
+		 //the toggleLED message toggles the arduino led
 		 if (msg == "toggleLED") {
 			arduino.toggleLED();
 			console.log('Toggling the LED');
 		 }
+		 //the toggleMotion message toggles the motion detector flag
 		 if (msg == "toggleMotion") {
 			arduino.toggleMotion();
 			console.log('Toggling the motion detector');
@@ -81,4 +93,5 @@ var socket = socketio.listen(server).on('connection', function (socket) {
  });
 });
 
+//create a new IotDevice according to the definitions declared above
 var arduino = new IotDevice(socket);
